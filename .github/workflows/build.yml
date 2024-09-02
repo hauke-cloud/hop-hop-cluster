@@ -1,0 +1,131 @@
+name: Build and Deploy RPM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+
+      - name: Install RPM build tools
+        run: |
+          sudo apt update \
+          && sudo apt install -y rpm gnupg createrepo-c
+
+      - name: Import GPG private key
+        run: |
+          echo "${{ secrets.RPM_GPG_PRIVATE_KEY }}" | gpg --import
+          echo "${{ secrets.RPM_GPG_PUBLIC_KEY }}" | gpg --import
+
+      - name: Configure RPM macros for GPG signing
+        run: |
+          echo "%_signature gpg" >> ~/.rpmmacros
+          echo "%_gpg_name hauke.cloud" >> ~/.rpmmacros
+          echo "%_gpg_path ~/.gnupg" >> ~/.rpmmacros
+          echo "%__gpg /usr/bin/gpg" >> ~/.rpmmacros
+
+      - name: Export GPG public key
+        run: |
+          gpg --export --armor > RPM-GPG-KEY
+
+      - name: Build RPM package
+        id: rpm
+        run: |
+          # Get PACKAGE_VERSION
+          PACKAGE_VERSION=$(cat *.spec | grep -Eo '^Version:.+' | rev | cut -d' ' -f1 | rev)
+
+          echo "Create RPM directories"
+          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+
+          echo "Copy source files"
+          mkdir ~/rpmbuild/SOURCES/hop-hop-cluster-${PACKAGE_VERSION}
+          cp src/* ~/rpmbuild/SOURCES/hop-hop-cluster-${PACKAGE_VERSION}/
+
+          echo "Copy spec file"
+          cp *.spec ~/rpmbuild/SPECS/
+
+          echo "Creates source archive"
+          cd ~/rpmbuild/SOURCES/ \
+          && tar -czvf ~/rpmbuild/SOURCES/hop-hop-cluster-${PACKAGE_VERSION}.tar.gz * \
+          && cd ~
+
+          echo "Build RPM package"
+          rpmbuild -ba ~/rpmbuild/SPECS/*.spec
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Create repository metadata
+        run: |
+          echo "Create repository directory"
+          mkdir -p ./rpm-repo/x86_64
+
+          echo "Copy RPM-GPG-KEY file to repository directory"
+          cp RPM-GPG-KEY ./rpm-repo/
+
+          echo "Copy new rpm to repository directory"
+          ls -la ~/rpmbuild/RPMS/x86_64/*
+          cp ~/rpmbuild/RPMS/x86_64/*.rpm ./rpm-repo/x86_64/
+
+          echo "Copy old rpms to repository directory"
+          cp -r gh-pages/x86_64/* ./rpm-repo/x86_64/
+
+          echo "Sign rpms"
+          for rpm in ./rpm-repo/x86_64/*.rpm; do
+            sudo -E rpm --addsign ${rpm}
+          done
+
+          echo "Create repository metadata"
+          createrepo_c ./rpm-repo
+
+          echo "Sign repository metadata"
+          gpg --detach-sign --armor ./rpm-repo/repodata/repomd.xml
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: rpm-repo/
+
+  trigger_pipeline:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate GitHub App Token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - name: Set Payload Tag Name
+        id: payload-tag-name
+        run: |
+          if [[ $BRANCH_NAME == "main" ]]; then
+            payload="dev"
+          else
+            payload="stable"
+          fi
+          echo "TAG_NAME=$payload" >> $GITHUB_ENV
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+
+      - name: Trigger another workflow
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          repository: hauke-cloud/fedora-coreos-images
+          event-type: trigger-workflow
+          client-payload: '{"tag_name": "${{ env.TAG_NAME }}" }'

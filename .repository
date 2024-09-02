@@ -1,9 +1,17 @@
 ---
-title: Template Repository
-description: Template repository for hauke.cloud projects
+title: HOP HOP Cluster
+description: |
+  This repository contains a collection of scripts to prepare a Fedora CoreOS for a Kubernetes installation and to join or initialize a cluster.
+
+  We are trying to achive following goals with this template:
+  - Standardization of Kubernetes cluster creation
+  - Configuration using Ignition/Cloud-Init
+  - Rolling updates of nodes after cluster initialization
+  - Providing the scripts using rpm so that they can be installed in Fedora CoreOS
+  - Cluster state determination based on API request and Kubernetes API server
 logo: ""
 docker_image_registry: "ghrc.io"
-docker_image_namespace: "hauke-cloud/example"
+docker_image: "hauke-cloud/example"
 docker_image_version: "latest"
 helm_repository: "https://hauke-cloud.github.io/helm-charts"
 helm_chart: "example"

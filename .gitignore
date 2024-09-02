@@ -112,7 +112,6 @@ build/
 *.dll
 *.pdb
 *.vscode/
-bin/
 obj/
 project.lock.json
 project.fragment.lock.json
@@ -195,7 +194,6 @@ $RECYCLE.BIN/
 .project
 .classpath
 .settings/
-bin/
 
 # IntelliJ IDEA
 .idea/
