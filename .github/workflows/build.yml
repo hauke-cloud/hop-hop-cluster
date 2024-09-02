@@ -79,7 +79,9 @@ jobs:
           cp ~/rpmbuild/RPMS/x86_64/*.rpm ./rpm-repo/x86_64/
 
           echo "Copy old rpms to repository directory"
-          cp -r gh-pages/x86_64/* ./rpm-repo/x86_64/
+          if [[ -d gh-pages/x86_64 ]]; then
+            cp -r gh-pages/x86_64/* ./rpm-repo/x86_64/
+          fi
 
           echo "Sign rpms"
           for rpm in ./rpm-repo/x86_64/*.rpm; do
