@@ -2,7 +2,7 @@
 <a href="https://hauke.cloud" target="_blank"><img src="https://img.shields.io/badge/home-hauke.cloud-brightgreen" alt="hauke.cloud" style="display: block;" /></a>
 <a href="https://github.com/hauke-cloud" target="_blank"><img src="https://img.shields.io/badge/github-hauke.cloud-blue" alt="hauke.cloud Github Organisation" style="display: block;" /></a>
 
-# Fedora CoreOS Kubernetes Bootstrap
+# HOP HOP Cluster
 
 <img src="https://raw.githubusercontent.com/hauke-cloud/.github/main/resources/img/organisation-logo-small.png" alt="hauke.cloud logo" width="109" height="123" align="right">
 
@@ -31,7 +31,7 @@ To get started, you need to clone the repository containing this `README.md` fil
 Use the following command to clone the repository:
 
 ```bash
-git clone https://github.com/hauke-cloud/fedora-coreos-kubernetes.git
+git clone https://github.com/hauke-cloud/hop-hop-cluster.git
 ```
 
 ### 2. Navigate to the repository directory
@@ -39,7 +39,7 @@ git clone https://github.com/hauke-cloud/fedora-coreos-kubernetes.git
 Once the repository is cloned, navigate to the directory:
 
 ```bash
-cd fedora-coreos-kubernetes
+cd hop-hop-cluster
 ```
 
 ### 3. Check the content
