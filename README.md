@@ -2,7 +2,7 @@
 <a href="https://hauke.cloud" target="_blank"><img src="https://img.shields.io/badge/home-hauke.cloud-brightgreen" alt="hauke.cloud" style="display: block;" /></a>
 <a href="https://github.com/hauke-cloud" target="_blank"><img src="https://img.shields.io/badge/github-hauke.cloud-blue" alt="hauke.cloud Github Organisation" style="display: block;" /></a>
 
-# HOP HOP Cluster
+# Hop Hop Cluster
 
 <img src="https://raw.githubusercontent.com/hauke-cloud/.github/main/resources/img/organisation-logo-small.png" alt="hauke.cloud logo" width="109" height="123" align="right">
 
@@ -24,6 +24,13 @@ We are trying to achive following goals with this template:
 - [Contact](#contact)
 
 ## 🚀 Getting started
+Before you begin, ensure you have the following:
+
+- A Kubernetes cluster
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) installed and configured to interact with your cluster
+- The [fluxv2](https://github.com/fluxcd/flux2) operator installed
+- Flux CLI installed [fluxv2-cli](https://github.com/fluxcd/flux2)
+
 To get started, you need to clone the repository containing this `README.md` file. Follow the steps below:
 
 ### 1. Clone the repository
