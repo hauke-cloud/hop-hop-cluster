@@ -1,5 +1,5 @@
 Name:           hop-hop-cluster
-Version:        0.0.1
+Version:        0.0.2
 Release:        1%{?dist}
 Summary:        A package which provides kubeadm bootstraps script
 
@@ -18,12 +18,15 @@ The necessary tokens, configurations and certificates can be provided using Igni
 %build
 
 %install
-mkdir -p %{buildroot}/usr/local/bin
-cp -a test.sh %{buildroot}/usr/local/bin/
+mkdir -p %{buildroot}/usr/bin
+cp -a test.sh %{buildroot}/usr/bin/
 
 %files
-/usr/local/bin/
+/usr/bin/
 
 %changelog
+* Thu Sep 13 2024 Hauke Mettendorf <hauke@mettendorf.it> - 0.0.2
+- Changes binary path to /usr/bin since Fedora CoreOS doesn't use /usr/local/bin
+
 * Thu Sep 02 2024 Hauke Mettendorf <hauke@mettendorf.it> - 0.0.1
 - Initial version
