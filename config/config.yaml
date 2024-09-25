@@ -1,0 +1,21 @@
+general:
+  mode: development
+  node_name: control-plane-0
+  node_ip: 10.10.0.4
+
+logger:
+  level: debug
+  development: true
+  encoding: console
+
+cluster:
+  id: 123456abc
+  interval: 2
+  members:
+    - name: main-control-plane-0
+      ip: 10.10.0.4
+
+tls:
+  ca_file: test/pki/ca.crt
+  cert_file: test/pki/control-plane-0.crt
+  key_file: test/pki/control-plane-0.key
